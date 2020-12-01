@@ -40,8 +40,10 @@ int main(){
 	Circle c=findMinCircle(ps_copy,N);
 	auto stop = high_resolution_clock::now();
 
-	if((int)c.radius>(int)R)
+	if((int)c.radius>(int)R) {
 		cout<<"you need to find a minimal radius (-40)"<<endl;
+		printf("%f instead of %f\n", c.radius, R);
+	}
 
 	bool covered=true;
 	for(size_t i=0;i<N && covered;i++){

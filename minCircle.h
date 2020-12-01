@@ -154,9 +154,18 @@ Circle findMinCircleAux(vector<Point>& pointsVector,
     return findMinCircleAux(pointsVector, rVector, size - 1);
 }
 
+vector<Point> arr_to_vec(Point** points, size_t size) {
+    vector<Point> vec;
+    for (size_t i = 0; i < size; i++)
+        vec.push_back(*points[i]);
+    return vec;
+}
+
 // Main function:
-Circle findMinCircle(Point** points,size_t size){
-    vector<Point> pointsVector(points, points + size); // is it correct?
+Circle findMinCircle(Point** points, size_t size){
+    // vector<Point> v(point, points + 1);
+    // vector<Point> pointsVector(points, points + size); // is it correct?
+    vector<Point> pointsVector = arr_to_vec(points, size);
     random_shuffle(pointsVector.begin(), pointsVector.end());
     return findMinCircleAux(pointsVector, {}, pointsVector.size());
 }

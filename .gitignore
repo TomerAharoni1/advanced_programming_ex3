@@ -1,2 +1,4 @@
 build/*
 callgrind*
+.vscode/*
+.gitignore

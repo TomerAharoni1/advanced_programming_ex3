@@ -9,6 +9,23 @@
 using namespace std;
 using namespace std::chrono;
 
+float get_random_num() {
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 100;
+}
+
+void check_circumscribed() {
+	vector<Point> points;
+	points.push_back({get_random_num(), get_random_num()});
+	points.push_back({get_random_num(), get_random_num()});
+	points.push_back({get_random_num(), get_random_num()});
+	printf("(%f, %f), (%f,%f), (%f, %f)\n", points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y);
+	Circle c1 = circle_from3(points[0], points[1], points[2]);
+	Circle c2 = circle_from(points[0], points[1], points[2]);
+	if (fabs(c1.radius - c2.radius) > 1e-5)
+		printf("wrong radius: %f instead of %f. ", c2.radius, c1.radius);
+	if (distance(c1.center, c2.center) > 1e-5)
+		printf("wrong center with distance of %f. center: (%f, %f) instead of: (%f, %f) ", distance(c1.center, c2.center), c2.center.x, c2.center.y, c1.center.x, c1.center.y);
+}
 
 Point** generate(Point center,int R, size_t size){
 	Point** p =new Point*[size];
@@ -30,7 +47,13 @@ int main(){
 	float cx=-500+rand()%1001;
 	float cy=-500+rand()%1001;
 	Point** ps=generate(Point(cx,cy),R,N);
-
+	
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	check_circumscribed();
+	// 	printf("%i\n", i);
+	// }
+	
 	// your working copy
 	Point** ps_copy=new Point*[N];
 	for(size_t i=0;i<N;i++)

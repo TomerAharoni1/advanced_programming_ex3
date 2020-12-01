@@ -8,6 +8,7 @@
 #include <algorithm>
 
 using namespace std;
+//* Einat's comments are with this * so that you know to look for them.
 
 // ------------ DO NOT CHANGE -----------
 class Point{
@@ -51,7 +52,9 @@ Point getCircleCenter(float bx, float by,
 
 // Function to return a unique circle that
 // intersects three points
-Circle circle_from(const Point& a, const Point& b,
+//* this is the old method which gives wrong answers
+//* according to my testings
+Circle circle_from3(const Point& a, const Point& b,
                    const Point& c) // complex, needs understanding and
                    // change
 {
@@ -62,6 +65,19 @@ Circle circle_from(const Point& a, const Point& b,
     center.x = center.x + a.x;
     center.y = center.y + a.y;
     return {center, distance(center, a)};
+}
+
+//* the source of those functions (go to the end): https://he.wikipedia.org/wiki/%D7%9E%D7%A2%D7%92%D7%9C_%D7%97%D7%95%D7%A1%D7%9D#%D7%94%D7%A7%D7%95%D7%98%D7%A8_%D7%95%D7%94%D7%9E%D7%A8%D7%9B%D7%96_%D7%A9%D7%9C_%D7%94%D7%9E%D7%A2%D7%92%D7%9C_%D7%94%D7%97%D7%95%D7%A1%D7%9D
+Circle circle_from(const Point& a, const Point& b, const Point& c) {
+    //* a, b, c are the points on the edge of the circle.
+    float A = (a.x * b.y) + (a.y * c.x) + (b.x * c.y) - (c.x * b.y) - (a.y * b.x) - (a.x * c.y);
+    float Vsqr[] = {(a.x * a.x + a.y * a.y), (b.x * b.x + b.y * b.y), (c.x * c.x + c.y * c.y)};
+    float B = Vsqr[0] * (b.x * c.y - c.x * b.y) + Vsqr[1] * (c.x * a.y - a.x * c.y) + Vsqr[2] * (a.x * b.y - a.y * b.x);
+    float Sx = (Vsqr[0] * (b.y - c.y) + Vsqr[1] * (c.y - a.y) + Vsqr[2] * (a.y - b.y)) / 2;
+    float Sy = (Vsqr[0] * (c.x - b.x) + Vsqr[1] * (a.x - c.x) + Vsqr[2] * (b.x - a.x)) / 2;
+    Point center = Point(Sx / A, Sy / A);
+    float radius = sqrt(A * B + Sx * Sx + Sy * Sy) / A;
+    return {center, radius};
 }
 
 // Function to return the smallest circle
@@ -84,7 +100,7 @@ bool is_valid_circle(const Circle& center,
     // to check  whether the points
     // lie inside the circle or not
     for (const Point& p : points)
-        if (isPointInsideCircle(center, p) == false)
+        if (!isPointInsideCircle(center, p))
             return false;
     return true;
 }
@@ -154,7 +170,7 @@ Circle findMinCircleAux(vector<Point>& pointsVector,
     return findMinCircleAux(pointsVector, rVector, size - 1);
 }
 
-vector<Point> arr_to_vec(Point** points, size_t size) {
+vector<Point> createPointsVector(Point** points, size_t size) {
     vector<Point> vec;
     for (size_t i = 0; i < size; i++)
         vec.push_back(*points[i]);
@@ -163,9 +179,10 @@ vector<Point> arr_to_vec(Point** points, size_t size) {
 
 // Main function:
 Circle findMinCircle(Point** points, size_t size){
-    // vector<Point> v(point, points + 1);
+    //* for some reason the commented line didn't work, so I wrote an helpout
+    //* method which does the same job
     // vector<Point> pointsVector(points, points + size); // is it correct?
-    vector<Point> pointsVector = arr_to_vec(points, size);
+    vector<Point> pointsVector = createPointsVector(points, size);
     random_shuffle(pointsVector.begin(), pointsVector.end());
     return findMinCircleAux(pointsVector, {}, pointsVector.size());
 }

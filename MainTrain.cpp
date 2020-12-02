@@ -46,7 +46,7 @@ Point **generate(Point center, int R, size_t size) {
 
 int main() {
     srand(time(NULL));
-    const size_t N = 250;
+    const size_t N = 250; // 250
     float R = 10 + rand() % 1000;
     float cx = -500 + rand() % 1001;
     float cy = -500 + rand() % 1001;

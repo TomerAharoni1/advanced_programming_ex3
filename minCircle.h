@@ -33,7 +33,9 @@ float distance(const Point &a, const Point &b) {
 }
 
 bool isPointInsideCircle(const Circle &circle, const Point &point) {
-    return distance(circle.center, point) <= circle.radius;
+    float d = distance(circle.center, point);
+    bool b = d <= (circle.radius + 1);
+    return b;
 }
 
 // The following two functions are used
@@ -70,8 +72,8 @@ Circle circle_from3(const Point &a, const Point &b,
 //https://he.wikipedia.org/wiki/%D7%9E%D7%A2%D7%92%D7%9C_%D7%97%D7%95%D7%A1%D7%9D#%D7%94%D7%A7%D7%95%D7%98%D7%A8_%D7%95%D7%94%D7%9E%D7%A8%D7%9B%D7%96_%D7%A9%D7%9C_%D7%94%D7%9E%D7%A2%D7%92%D7%9C_%D7%94%D7%97%D7%95%D7%A1%D7%9D
 Circle circle_from(const Point &a, const Point &b, const Point &c) {
     //* a, b, c are the points on the edge of the circle.
-    float A = (a.x * b.y) + (a.y * c.x) + (b.x * c.y) - (c.x * b.y) -
-                        (a.y * b.x) - (a.x * c.y);
+    // printf("3 points circle\n");
+    float A = a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y);
     float Vsqr[] = {(a.x * a.x + a.y * a.y), (b.x * b.x + b.y * b.y),
                                     (c.x * c.x + c.y * c.y)};
     float B = Vsqr[0] * (b.x * c.y - c.x * b.y) +
@@ -84,13 +86,15 @@ Circle circle_from(const Point &a, const Point &b, const Point &c) {
             (Vsqr[0] * (c.x - b.x) + Vsqr[1] * (a.x - c.x) + Vsqr[2] * (b.x - a.x)) /
             2;
     Point center = Point(Sx / A, Sy / A);
-    float radius = sqrt(A * B + Sx * Sx + Sy * Sy) / A;
+    float radius = sqrt(A * B + Sx * Sx + Sy * Sy) / fabs(A);
+    }
     return {center, radius};
 }
 
 // Function to return the smallest circle
 // that intersects 2 points
 Circle circle_from(const Point &a, const Point &b) {
+    // printf("2 points circle.\n");
     // Set the center to be the midpoint of A and B
     Point point = {(a.x + b.x) / 2, (a.y + b.y) / 2};
     float radius = distance(a, b) / 2;
@@ -114,7 +118,7 @@ bool is_valid_circle(const Circle &center, const vector<Point> &points) {
 // Function to return the minimum enclosing
 // circle for N <= 3
 Circle min_circle_trivial(vector<Point> &pointsVector) {
-
+    // printf("min_circle\n");
     if (pointsVector.empty()) {
         return {{0, 0}, 0};
     } else if (pointsVector.size() == 1) {
@@ -138,6 +142,11 @@ Circle min_circle_trivial(vector<Point> &pointsVector) {
     c = circle_from(pointsVector[1], pointsVector[2]);
     if (is_valid_circle(c, pointsVector) && c.radius < min_circle.radius)
         min_circle = c;
+
+        // if (!is_valid_circle(min_circle, pointsVector)) {
+        //     printf("not valid at line 150\n");
+        //     is_valid_circle(min_circle, pointsVector);
+        // }
 
     return min_circle;
 }
